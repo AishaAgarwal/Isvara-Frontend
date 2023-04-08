@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "578896536791",
+    "project_id": "isvara-bd2eb",
+    "storage_bucket": "isvara-bd2eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578896536791:android:91b59d99f99abbd6577c92",
+        "android_client_info": {
+          "package_name": "com.example.isvaraf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578896536791-nshpr8ol7i2gk7i9k4i197b7uapb696d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_fOrBYpMk98R83vvyvH48d2jxX7kO4-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578896536791-nshpr8ol7i2gk7i9k4i197b7uapb696d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "578896536791-eethuilmpimpp35vgse1tctt8nftgghf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.isvaraf"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
