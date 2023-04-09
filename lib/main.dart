@@ -34,7 +34,32 @@ import 'package:rive/rive.dart';
 //     print('Notifications not supported');
 //   }
 // }
+class DynamicDialog extends StatefulWidget {
+  // ignore: prefer_typing_uninitialized_variables
+  final title;
+  final body;
+  DynamicDialog({this.title, this.body});
+  @override
+  _DynamicDialogState createState() => _DynamicDialogState();
+}
 
+class _DynamicDialogState extends State<DynamicDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      actions: <Widget>[
+        OutlinedButton.icon(
+            label: Text('Close'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.close))
+      ],
+      content: Text(widget.body),
+    );
+  }
+}
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
@@ -262,17 +287,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // ignore: use_build_context_synchronously
       sendPushMessageToWeb();
       print("Sent...............................................");
-      // ElegantNotification(
-      //   title: Text('New Version'),
-      //   description: Text("A new version is available to you please update."),
-      //   icon: const Icon(
-      //     Icons.access_alarm,
-      //     color: Colors.orange,
-      //   ),
-      //   progressIndicatorColor: Colors.orange,
-      // ).show(context);
     }
-    // print("cm");
   }
 
   void Cap_Image() async {
@@ -292,10 +307,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   title: const Text("Welcome to C.O.E.U.S"),
-      // ),
       body: Stack(
         children: [
           Positioned(
@@ -344,10 +355,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             ),
             ElevatedButton.icon(
               onPressed: () {
-                // showNotification('Hello', 'This is a notification!');
                 sendPushMessageToWeb();
                 print("hello");
-                // print(_token);
               },
               icon: const Icon(
                 Icons.camera_alt_rounded,
@@ -369,11 +378,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-                            // If the Future is complete, display the preview.
                             print("I am here");
                             Timer.periodic(
                                 const Duration(seconds: 2),
-                                // ignore: non_constant_identifier_names
                                 (timer) => {
                                       if (stat.on.value == false)
                                         {timer.cancel}
@@ -384,7 +391,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                     });
                             return const SizedBox();
                           } else {
-                            // Otherwise, display a loading indicator.
                             return const Center(child: SizedBox());
                           }
                         },
@@ -433,28 +439,4 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 }
 
-class DynamicDialog extends StatefulWidget {
-  final title;
-  final body;
-  DynamicDialog({this.title, this.body});
-  @override
-  _DynamicDialogState createState() => _DynamicDialogState();
-}
 
-class _DynamicDialogState extends State<DynamicDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.title),
-      actions: <Widget>[
-        OutlinedButton.icon(
-            label: Text('Close'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.close))
-      ],
-      content: Text(widget.body),
-    );
-  }
-}
