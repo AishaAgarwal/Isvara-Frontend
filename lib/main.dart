@@ -245,7 +245,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late Map<String, dynamic> ijson;
   Future<void> upload() async {
     var request = http.MultipartRequest(
-        'POST', Uri.parse("http://10.12.23.127:5675/upload"));
+        'POST', Uri.parse("https://flask-production-ed57.up.railway.app/upload"));
 
     request.files.add(http.MultipartFile(
         'file', image.readAsBytes().asStream(), await image.length(),
@@ -260,7 +260,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   List<int> track = [];
   void fetchdata() async {
     final response =
-        await http.get(Uri.parse("http://10.12.23.127:5675/result"));
+        await http.get(Uri.parse("https://flask-production-ed57.up.railway.app/result"));
     json = jsonDecode(response.body);
     print(json['Distance']);
     track.add(json['Distance']);
