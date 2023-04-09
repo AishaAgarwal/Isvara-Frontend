@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:isvaraf/bindings/bind.dart';
 import 'package:isvaraf/controller/controller.dart';
@@ -12,28 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
-// import 'package:browser_api/browser_api.dart';
-// ignore: import_of_legacy_library_into_null_safe
-// import 'dart:html';
-// import 'dart:js_util' as js_util;
-// import 'dart:js' as js;
-// import 'dart:js' as js;
 
-// void showNotification(String title, String body) {
-//   if (js.context.hasProperty('Notification')) {
-//     if (js.context['Notification']['permission'] == 'granted') {
-//       var notificationOptions = {
-//         'body': body
-//       };
-//       var notification = js.JsObject(js.context['Notification'], [title, notificationOptions]);
-//       js.JsObject(notification)['show']();
-//     } else {
-//       js.context['Notification'].callMethod('requestPermission', []);
-//     }
-//   } else {
-//     print('Notifications not supported');
-//   }
-// }
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   final title;
@@ -60,6 +38,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     );
   }
 }
+
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
@@ -155,13 +134,12 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
       print('Message data: ${message.data}');
 
       if (message.notification != null) {
-        print(
-            'Message also contained a notification: ${message.notification!.body}');
+        print('Message also contained a notification: ${notification!.body}');
         showDialog(
             context: context,
             builder: ((BuildContext context) {
               return DynamicDialog(
-                  title: notification!.title, body: notification.body);
+                  title: notification.title, body: notification.body);
             }));
       }
     });
@@ -278,15 +256,26 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 
   late Map<String, dynamic> json;
+  int i = 0;
+  List<int> track = [];
   void fetchdata() async {
     final response =
         await http.get(Uri.parse("http://10.12.23.127:5675/result"));
     json = jsonDecode(response.body);
     print(json['Distance']);
-    if (json['Distance'] < 30) {
-      // ignore: use_build_context_synchronously
-      sendPushMessageToWeb();
-      print("Sent...............................................");
+    track.add(json['Distance']);
+    if (track.length == 30) {
+      for (int j = 0; j < track.length; j++) {
+        if (j < 30) {
+          i++;
+        }
+      }
+      if ((i / 30) * 100 >= 85) {
+        sendPushMessageToWeb();
+        print("Sent...............................................");
+        i = 0;
+        track.clear();
+      }
     }
   }
 
@@ -353,23 +342,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             SizedBox(
               height: 40,
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                sendPushMessageToWeb();
-                print("hello");
-              },
-              icon: const Icon(
-                Icons.camera_alt_rounded,
-              ),
-              label: const Text(
-                'Take a picture from Camera',
-                style: TextStyle(
-                    fontFamily: "Mukta",
-                    height: 1.2,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w700),
-              ), // <-- Text
-            ),
             Obx(
               () => SizedBox(
                 child: stat.x.value
@@ -380,7 +352,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                               ConnectionState.done) {
                             print("I am here");
                             Timer.periodic(
-                                const Duration(seconds: 2),
+                                const Duration(seconds: 4),
                                 (timer) => {
                                       if (stat.on.value == false)
                                         {timer.cancel}
@@ -438,5 +410,3 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
   }
 }
-
-
