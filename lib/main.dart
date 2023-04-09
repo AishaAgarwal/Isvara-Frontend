@@ -258,7 +258,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late Map<String, dynamic> json;
   int i = 0;
   List<int> track = [];
-  void fetchdata() async {
+  Future<void> fetchdata() async {
     final response =
         await http.get(Uri.parse("https://flask-production-ed57.up.railway.app/result"));
     json = jsonDecode(response.body);
@@ -279,13 +279,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     }
   }
 
-  void Cap_Image() async {
+  Future<void> Cap_Image() async {
     try {
       image = await _controller.takePicture();
       if (!mounted) return;
       print("I am here");
       await upload();
-      fetchdata();
+      await fetchdata();
     } catch (e) {
       print(e);
     }
@@ -349,16 +349,16 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         future: _initializeControllerFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                              ConnectionState.done)  {
                             print("I am here");
                             Timer.periodic(
                                 const Duration(seconds: 4),
-                                (timer) => {
+                                (timer) async => {
                                       if (stat.on.value == false)
                                         {timer.cancel}
                                       else
                                         {
-                                          Cap_Image(),
+                                          await Cap_Image(),
                                         }
                                     });
                             return const SizedBox();
