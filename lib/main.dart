@@ -1,29 +1,46 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:camera/camera.dart';
-import 'package:elegant_notification/elegant_notification.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:isvaraf/bindings/bind.dart';
 import 'package:isvaraf/controller/controller.dart';
-import 'package:isvaraf/response_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:isvaraf/splash_page.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:rive/rive.dart';
+// import 'package:browser_api/browser_api.dart';
+// ignore: import_of_legacy_library_into_null_safe
+// import 'dart:html';
+// import 'dart:js_util' as js_util;
+// import 'dart:js' as js;
+// import 'dart:js' as js;
 
+// void showNotification(String title, String body) {
+//   if (js.context.hasProperty('Notification')) {
+//     if (js.context['Notification']['permission'] == 'granted') {
+//       var notificationOptions = {
+//         'body': body
+//       };
+//       var notification = js.JsObject(js.context['Notification'], [title, notificationOptions]);
+//       js.JsObject(notification)['show']();
+//     } else {
+//       js.context['Notification'].callMethod('requestPermission', []);
+//     }
+//   } else {
+//     print('Notifications not supported');
+//   }
+// }
 
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
   InBin().dependencies();
   await Firebase.initializeApp(
-  options : DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,32 +50,180 @@ Future<void> main() async {
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
   runApp(GetMaterialApp(
-    initialBinding: InBin(),
-    theme: ThemeData(useMaterial3: true),
-    debugShowCheckedModeBanner: false,
-    // home: responseScreen(text: 'Hello',),
-    home: TakePictureScreen(
-      camera: firstCamera,
-    ),
-  ));
+      initialBinding: InBin(),
+      theme: ThemeData(useMaterial3: true),
+      debugShowCheckedModeBanner: false,
+      // home: responseScreen(text: 'Hello',),
+      home: PushNotificationApp(
+        camera: firstCamera,
+      )
+      // TakePictureScreen(
+      //   camera: firstCamera,
+      // ),
+      ));
 }
 
-//TakePictureScreen(
-// Pass the appropriate camera to the TakePictureScreen widget.
-//  camera: firstCamera,
-//),
-// A screen that allows users to take a picture using a given camera.
+class PushNotificationApp extends StatefulWidget {
+  const PushNotificationApp({
+    super.key,
+    required this.camera,
+  });
+  static const routeName = "/firebase-push";
+  final CameraDescription camera;
+  @override
+  _PushNotificationAppState createState() => _PushNotificationAppState();
+}
+
+class _PushNotificationAppState extends State<PushNotificationApp> {
+  @override
+  void initState() {
+    getPermission();
+    messageListener(context);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      // Initialize FlutterFire
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          print('android firebase initiated');
+          return TakePictureScreen(camera: widget.camera);
+        }
+        // Otherwise, show something whilst waiting for initialization to complete
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  Future<void> getPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+  }
+
+  void messageListener(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print(
+            'Message also contained a notification: ${message.notification!.body}');
+        showDialog(
+            context: context,
+            builder: ((BuildContext context) {
+              return DynamicDialog(
+                  title: notification!.title, body: notification.body);
+            }));
+      }
+    });
+  }
+}
+
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({
     super.key,
     required this.camera,
   });
+
   final CameraDescription camera;
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }
 
 class TakePictureScreenState extends State<TakePictureScreen> {
+  late String? _token;
+  late Stream<String> _tokenStream;
+  int notificationCount = 0;
+
+  void setToken(String? token) {
+    print('FCM TokenToken: $token');
+    setState(() {
+      _token = token;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // To display the current output from the Camera,
+    // create a CameraController.
+    FirebaseMessaging.instance.getToken().then(setToken);
+    _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
+    _tokenStream.listen(setToken);
+    _controller = CameraController(
+      // Get a specific camera from the list of available cameras.
+      widget.camera,
+      // Define the resolution to use.
+      ResolutionPreset.max,
+    );
+
+    // Next, initialize the controller. This returns a Future.
+    _initializeControllerFuture = _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller when the widget is disposed.
+    _controller.dispose();
+    super.dispose();
+  }
+
+  sendPushMessageToWeb() async {
+    if (_token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+    try {
+      await http
+          .post(
+            Uri.parse('https://fcm.googleapis.com/fcm/send'),
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+              'Authorization':
+                  'key=AAAAhsjsJNc:APA91bFj36wOKcPvOEl0crJ159uTkBRE72-KnIoI71yPAGqaYF8pLfOSzw0YxJudD5TvOdGiwcKTUXdbfBp5wEbhrYNLJxnDPo40aYUBDxaUxwn04ba33t1vahBorssjhszC03HXWcJt'
+            },
+            body: jsonEncode({
+              'to': _token,
+              'message': {
+                'token': _token,
+              },
+              "notification": {
+                "title": "Push Notification",
+                "body": "Firebase  push notification"
+              }
+            }),
+          )
+          .then((value) => print(value.body));
+      print('FCM request for web sent!');
+    } catch (e) {
+      print(e);
+    }
+  }
+
   late CameraController _controller;
   final MaterialStateProperty<Icon?> thumbIcon =
       MaterialStateProperty.resolveWith<Icon?>(
@@ -86,6 +251,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     ijson = jsonDecode(await res.stream.bytesToString());
     print(ijson);
   }
+
   late Map<String, dynamic> json;
   void fetchdata() async {
     final response =
@@ -94,15 +260,17 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     print(json['Distance']);
     if (json['Distance'] < 30) {
       // ignore: use_build_context_synchronously
-      ElegantNotification(
-        title: Text('New Version'),
-        description: Text("A new version is available to you please update."),
-        icon: const Icon(
-          Icons.access_alarm,
-          color: Colors.orange,
-        ),
-        progressIndicatorColor: Colors.orange,
-      ).show(context);
+      sendPushMessageToWeb();
+      print("Sent...............................................");
+      // ElegantNotification(
+      //   title: Text('New Version'),
+      //   description: Text("A new version is available to you please update."),
+      //   icon: const Icon(
+      //     Icons.access_alarm,
+      //     color: Colors.orange,
+      //   ),
+      //   progressIndicatorColor: Colors.orange,
+      // ).show(context);
     }
     // print("cm");
   }
@@ -117,29 +285,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     } catch (e) {
       print(e);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // To display the current output from the Camera,
-    // create a CameraController.
-    _controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-      widget.camera,
-      // Define the resolution to use.
-      ResolutionPreset.max,
-    );
-
-    // Next, initialize the controller. This returns a Future.
-    _initializeControllerFuture = _controller.initialize();
-  }
-
-  @override
-  void dispose() {
-    // Dispose of the controller when the widget is disposed.
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -193,6 +338,28 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                   },
                 ),
               ),
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                // showNotification('Hello', 'This is a notification!');
+                sendPushMessageToWeb();
+                print("hello");
+                // print(_token);
+              },
+              icon: const Icon(
+                Icons.camera_alt_rounded,
+              ),
+              label: const Text(
+                'Take a picture from Camera',
+                style: TextStyle(
+                    fontFamily: "Mukta",
+                    height: 1.2,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w700),
+              ), // <-- Text
             ),
             Obx(
               () => SizedBox(
@@ -262,6 +429,32 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           ))
         ],
       ),
+    );
+  }
+}
+
+class DynamicDialog extends StatefulWidget {
+  final title;
+  final body;
+  DynamicDialog({this.title, this.body});
+  @override
+  _DynamicDialogState createState() => _DynamicDialogState();
+}
+
+class _DynamicDialogState extends State<DynamicDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      actions: <Widget>[
+        OutlinedButton.icon(
+            label: Text('Close'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.close))
+      ],
+      content: Text(widget.body),
     );
   }
 }

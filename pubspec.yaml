@@ -41,7 +41,10 @@ dependencies:
   camera: ^0.10.3+2
   get: ^4.6.5
   firebase_core: ^2.9.0
+  firebase_messaging: 
+  flutter_local_notifications:
 
+  http:
 dev_dependencies:
   flutter_test:
     sdk: flutter

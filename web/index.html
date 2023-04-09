@@ -12,13 +12,13 @@
 
 <script>
   const firebaseConfig = {
-  apiKey: "AIzaSyC_fOrBYpMk98R83vvyvH48d2jxX7kO4-0",
-  authDomain: "isvara-bd2eb.web.app",
+  apiKey: "AIzaSyAB7rcLzvPERowbPbVSD-K9kMrISLwaJR0",
+  authDomain: "isvara-bd2eb.firebaseapp.com",
   projectId: "isvara-bd2eb",
-  storageBucket: "flutter-dasdadas-tes-fec9d.appspot.com",
+  storageBucket: "isvara-bd2eb.appspot.com",
   messagingSenderId: "578896536791",
   appId: "1:578896536791:web:7a1ad85941800e9d577c92",
-  measurementId: "G-dsadsa"
+  measurementId: "G-LN40FSMB78"
 };
   firebase.initializeApp(firebaseConfig);
   </script>
@@ -28,6 +28,7 @@
       window.addEventListener("load", function () {
         navigator.serviceWorker.register("/firebase-messaging-sw.js");
       });
+      var serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
     }
     </script>
 </body>
