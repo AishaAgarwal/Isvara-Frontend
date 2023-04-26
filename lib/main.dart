@@ -466,7 +466,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         Padding(
                           padding: EdgeInsets.only(right: 180),
                           child: MyElevatedButton(
-                            width: 120,
+                            width: 140,
                             height: 45,
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(

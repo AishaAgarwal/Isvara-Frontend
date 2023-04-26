@@ -195,7 +195,7 @@ class homeState extends State<home> {
                         height: 100,
                       ),
                       MyElevatedButton(
-                        width: 120,
+                        width: 140,
                         height: 45,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
