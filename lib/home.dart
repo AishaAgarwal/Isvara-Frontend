@@ -62,13 +62,6 @@ class homeState extends State<home> {
           //     bottom: 200,
           //     left: 100,
           //     child: Image.asset('RiveAsset/spine.png')),
-          Positioned(
-              child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 10,
-              sigmaY: 10,
-            ),
-          )),
           Padding(
             padding: EdgeInsets.only(right: 125),
             child: riv.RiveAnimation.asset(
@@ -95,8 +88,8 @@ class homeState extends State<home> {
           Positioned(
               child: BackdropFilter(
             filter: ImageFilter.blur(
-              sigmaX: 2,
-              sigmaY: 2,
+              sigmaX: 0,
+              sigmaY: 0,
             ),
             child: const SizedBox(
                 // height: 10,
