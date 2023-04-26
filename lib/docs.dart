@@ -190,7 +190,7 @@ class docState extends State<doc> {
                         height: 100,
                       ),
                       MyElevatedButton(
-                        width: 140,
+                        width: 130,
                         height: 45,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
