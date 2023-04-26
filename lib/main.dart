@@ -8,9 +8,11 @@ import 'package:isvaraf/controller/controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:isvaraf/docs.dart' as doc;
+import 'package:isvaraf/home.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as riv;
 
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -40,31 +42,20 @@ class _DynamicDialogState extends State<DynamicDialog> {
 }
 
 Future<void> main() async {
-  // Ensure that plugin services are initialized so that `availableCameras()`
-  // can be called before `runApp()`
   InBin().dependencies();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
-
-  // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
   runApp(GetMaterialApp(
       initialBinding: InBin(),
       theme: ThemeData(useMaterial3: true),
       debugShowCheckedModeBanner: false,
-      // home: responseScreen(text: 'Hello',),
-      home: PushNotificationApp(
+      home: home(
         camera: firstCamera,
-      )
-      // TakePictureScreen(
-      //   camera: firstCamera,
-      // ),
-      ));
+      )));
 }
 
 class PushNotificationApp extends StatefulWidget {
@@ -215,8 +206,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 'token': _token,
               },
               "notification": {
-                "title": "Push Notification",
-                "body": "Firebase  push notification"
+                "title": "Too Close to the Screen",
+                "body": "Would you please move back"
               }
             }),
           )
@@ -244,8 +235,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late Future<void> _initializeControllerFuture;
   late Map<String, dynamic> ijson;
   Future<void> upload() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse("https://flask-production-ed57.up.railway.app/upload"));
+    var request = http.MultipartRequest('POST',
+        Uri.parse("https://flask-production-ed57.up.railway.app/upload"));
 
     request.files.add(http.MultipartFile(
         'file', image.readAsBytes().asStream(), await image.length(),
@@ -259,8 +250,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   int i = 0;
   List<int> track = [];
   Future<void> fetchdata() async {
-    final response =
-        await http.get(Uri.parse("https://flask-production-ed57.up.railway.app/result"));
+    final response = await http
+        .get(Uri.parse("https://flask-production-ed57.up.railway.app/result"));
     json = jsonDecode(response.body);
     print(json['Distance']);
     track.add(json['Distance']);
@@ -298,11 +289,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          Positioned(
-              width: MediaQuery.of(context).size.width * 1.5,
-              bottom: 200,
-              left: 100,
-              child: Image.asset('RiveAsset/Spline.png')),
+          // Positioned(
+          //     width: MediaQuery.of(context).size.width * 1.5,
+          //     bottom: 200,
+          //     left: 100,
+          //     child: Image.asset('RiveAsset/Spline.png')),
           Positioned(
               child: BackdropFilter(
             filter: ImageFilter.blur(
@@ -310,9 +301,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               sigmaY: 10,
             ),
           )),
-          const RiveAnimation.asset(
-            'RiveAsset/shapes.riv',
+          Padding(
+            padding: EdgeInsets.only(right: 150),
+            child: riv.RiveAnimation.asset(
+              'lib/spine.riv',
+            ),
           ),
+
           Positioned(
               child: BackdropFilter(
             filter: ImageFilter.blur(
@@ -323,24 +318,38 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 // height: 10,
                 ),
           )),
+          Padding(
+              padding: EdgeInsets.only(left: 650, top: 150),
+              child: SizedBox(
+                  height: 500,
+                  child: riv.RiveAnimation.asset(
+                    'lib/moon_scan2.riv',
+                  ))),
           Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-              height: 50,
-            ),
+            // SizedBox(
+            //   height: 10,
+            // ),
             Obx(
-              () => Align(
-                alignment: Alignment.center,
-                child: Switch(
-                  thumbIcon: thumbIcon,
-                  value: stat.on.value,
-                  onChanged: (bool value) {
-                    stat.on.value = value;
-                  },
+              () => Padding(
+                padding: EdgeInsets.only(
+                  left: 350,
+                  bottom: 10,
+                ),
+                child: SizedBox(
+                  height: 49,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Switch(
+                      thumbIcon: thumbIcon,
+                      activeColor: Color.fromARGB(255, 3, 141, 254),
+                      value: stat.on.value,
+                      onChanged: (bool value) {
+                        stat.on.value = value;
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 40,
             ),
             Obx(
               () => SizedBox(
@@ -349,7 +358,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         future: _initializeControllerFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
-                              ConnectionState.done)  {
+                              ConnectionState.done) {
                             print("I am here");
                             Timer.periodic(
                                 const Duration(seconds: 4),
@@ -363,48 +372,124 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                     });
                             return const SizedBox();
                           } else {
-                            return const Center(child: SizedBox());
+                            return const SizedBox();
                           }
                         },
                       )
-                    : const SizedBox(
-                        height: 10,
-                      ),
+                    : const SizedBox(),
               ),
             ),
           ]),
-          SafeArea(
-              child: Padding(
-            padding: const EdgeInsets.only(left: 32, top: 100),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width) * 1 / 1.59,
-                  child: Column(
-                    children: const [
-                      Text(
-                        "Welcome to Isvara",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 60,
-                            fontFamily: "Mukta",
-                            height: 1.2,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Keeping an eye on your eyes",
-                        style: TextStyle(color: Colors.white60),
-                      )
-                    ],
+          Padding(
+            padding: EdgeInsets.only(top: 40, left: 130),
+            child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
+          ),
+          Obx(
+            () => SafeArea(
+                child: Padding(
+              padding: const EdgeInsets.only(left: 20, top: 100),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
-            ),
-          ))
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width) * 1 / 1.59,
+                    child: Column(
+                      children: [
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        stat.on.value
+                            ? Text(
+                                "Isvara is currently Active",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 55,
+                                    fontFamily: "Mukta",
+                                    height: 1.2,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            : const Text(
+                                "Isvara is currently Deactive",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 55,
+                                    fontFamily: "Mukta",
+                                    height: 1.2,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                          "Keeping an eye on your eyes",
+                          style: TextStyle(color: Colors.white60),
+                        ),
+                        SizedBox(
+                          height: 90,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: SizedBox(
+                            width: 450,
+                            child: Text(
+                              "Would you want to continue Isvara?",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 230, 222, 222),
+                                  fontSize: 18,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 180,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: SizedBox(
+                            width: 450,
+                            child: Text(
+                              "In order to get a recap and better understand the usage and features provided",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 230, 222, 222),
+                                  fontSize: 17),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 70,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 180),
+                          child: MyElevatedButton(
+                            width: 120,
+                            height: 45,
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  doc.doc(
+                                    camera: widget.camera,
+                                  )));
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            child: Text(
+                              'Go to Docs',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          )
         ],
       ),
     );
