@@ -355,7 +355,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               'lib/spine.riv',
             ),
           ),
-
           Positioned(
               child: BackdropFilter(
             filter: ImageFilter.blur(
