@@ -13,8 +13,7 @@ import 'package:isvaraf/home.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' as riv;
-
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -42,6 +41,49 @@ class _DynamicDialogState extends State<DynamicDialog> {
     );
   }
 }
+
+class MyElevated extends StatelessWidget {
+  final BorderRadiusGeometry? borderRadius;
+  final double? width;
+  final double height;
+  final Gradient gradient;
+  final VoidCallback? onPressed;
+  final Widget child;
+
+  const MyElevated({
+    Key? key,
+    required this.onPressed,
+    required this.child,
+    this.borderRadius,
+    this.width,
+    this.height = 30,
+    this.gradient = const LinearGradient(colors: [Colors.cyan, Colors.indigo]),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final borderRadius = this.borderRadius ?? BorderRadius.circular(0);
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: borderRadius,
+      ),
+      child: ElevatedButton.icon(
+        icon: SizedBox(),
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        ),
+        label: child,
+      ),
+    );
+  }
+}
+
 Future<void> main() async {
   InBin().dependencies();
   await Firebase.initializeApp(
@@ -93,7 +135,10 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           print('android firebase initiated');
-          return TakePictureScreen(camera: widget.camera);
+          return TakePictureScreen(
+            camera: widget.camera,
+            dat: null,
+          );
         }
         // Otherwise, show something whilst waiting for initialization to complete
         return Center(
@@ -117,7 +162,7 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
 
     print('User granted permission: ${settings.authorizationStatus}');
   }
-  
+
   void messageListener(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -142,9 +187,11 @@ class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({
     super.key,
     required this.camera,
+    required this.dat,
   });
 
   final CameraDescription camera;
+  final User? dat;
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }
@@ -320,6 +367,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 ),
           )),
           Padding(
+            padding: const EdgeInsets.only(top: 50, left: 1230),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100.0),
+                child: SizedBox(
+                    height: 50,
+                    child: Image.network(widget.dat!.photoURL.toString()))),
+          ),
+          Padding(
               padding: EdgeInsets.only(left: 650, top: 150),
               child: SizedBox(
                   height: 500,
@@ -466,16 +521,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 180),
-                          child: MyElevatedButton(
+                          child: MyElevated(
                             width: 130,
                             height: 45,
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  doc.doc(
-                                    camera: widget.camera,
-                                    data: null,
-                                  )));
+                                  builder: (BuildContext context) => doc.doc(
+                                        camera: widget.camera,
+                                        data: null,
+                                      )));
                             },
                             borderRadius: BorderRadius.circular(20),
                             child: Text(

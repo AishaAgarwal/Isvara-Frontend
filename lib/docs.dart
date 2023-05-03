@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:isvaraf/main.dart';
 import 'package:rive/rive.dart' as riv;
 import 'package:firebase_auth/firebase_auth.dart';
+
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   final title;
@@ -34,11 +35,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
 }
 
 class doc extends StatefulWidget {
-  const doc({
-    super.key,
-    required this.camera,
-    required this.data
-  });
+  const doc({super.key, required this.camera, required this.data});
   final CameraDescription camera;
   final User? data;
   @override
@@ -98,8 +95,12 @@ class docState extends State<doc> {
             child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 50, left: 230),
-            child: SizedBox(height: 60, child: Image.network(widget.data!.photoURL.toString())),
+            padding: const EdgeInsets.only(top: 50, left: 1230),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100.0),
+                child: SizedBox(
+                    height: 50,
+                    child: Image.network(widget.data!.photoURL.toString()))),
           ),
           SafeArea(
               child: Padding(
@@ -193,6 +194,7 @@ class docState extends State<doc> {
                               builder: (BuildContext context) =>
                                   TakePictureScreen(
                                     camera: widget.camera,
+                                    dat: widget.data
                                   )));
                         },
                         borderRadius: BorderRadius.circular(20),

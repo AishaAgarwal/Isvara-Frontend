@@ -21,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => TakePictureScreen(
               camera: widget.ca,
+              dat: null,
             )));
   }
 
