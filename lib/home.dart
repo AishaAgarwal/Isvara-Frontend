@@ -7,6 +7,7 @@ import 'package:isvaraf/docs.dart';
 import 'package:isvaraf/main.dart';
 import 'package:rive/rive.dart' as riv;
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -15,6 +16,21 @@ class DynamicDialog extends StatefulWidget {
   DynamicDialog({this.title, this.body});
   @override
   _DynamicDialogState createState() => _DynamicDialogState();
+}
+
+Future<User?> signInWithGoogle({required BuildContext context}) async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  User? user;
+  GoogleAuthProvider authProvider = GoogleAuthProvider();
+  try {
+    final UserCredential userCredential =
+        await auth.signInWithPopup(authProvider);
+    user = userCredential.user;
+    print(user!.photoURL);
+  } catch (e) {
+    print(e);
+  }
+  return user;
 }
 
 class _DynamicDialogState extends State<DynamicDialog> {
@@ -188,18 +204,25 @@ class homeState extends State<home> {
                         height: 100,
                       ),
                       MyElevatedButton(
-                        width: 130,
+                        width: 210,
                         height: 45,
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) => doc(
-                                    camera: widget.camera,
-                                  )));
+                        onPressed: () async {
+                          await signInWithGoogle(context: context)
+                              .then((value) => {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                doc(
+                                                  camera: widget.camera,
+                                                  data: value 
+                                                ))),
+                                    print(value)
+                                  });
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                          'Sign in with Google',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ],
@@ -242,14 +265,21 @@ class MyElevatedButton extends StatelessWidget {
         gradient: gradient,
         borderRadius: borderRadius,
       ),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
+        icon: SizedBox(
+          height: 30,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(100.0),
+            child: Image.network('lib/google.png'),
+          ),
+        ),
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: borderRadius),
         ),
-        child: child,
+        label: child,
       ),
     );
   }

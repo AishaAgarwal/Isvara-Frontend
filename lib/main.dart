@@ -14,6 +14,8 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' as riv;
 
+
+
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   final title;
@@ -40,7 +42,6 @@ class _DynamicDialogState extends State<DynamicDialog> {
     );
   }
 }
-
 Future<void> main() async {
   InBin().dependencies();
   await Firebase.initializeApp(
@@ -116,7 +117,7 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
 
     print('User granted permission: ${settings.authorizationStatus}');
   }
-
+  
   void messageListener(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -473,6 +474,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                               builder: (BuildContext context) =>
                                   doc.doc(
                                     camera: widget.camera,
+                                    data: null,
                                   )));
                             },
                             borderRadius: BorderRadius.circular(20),

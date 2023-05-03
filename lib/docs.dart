@@ -5,8 +5,7 @@ import 'package:isvaraf/controller/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:isvaraf/main.dart';
 import 'package:rive/rive.dart' as riv;
-import 'package:animated_text_kit/animated_text_kit.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   final title;
@@ -38,8 +37,10 @@ class doc extends StatefulWidget {
   const doc({
     super.key,
     required this.camera,
+    required this.data
   });
   final CameraDescription camera;
+  final User? data;
   @override
   docState createState() => docState();
 }
@@ -74,6 +75,7 @@ class docState extends State<doc> {
               'lib/spine.riv',
             ),
           ),
+
           Positioned(
               child: BackdropFilter(
             filter: ImageFilter.blur(
@@ -92,8 +94,12 @@ class docState extends State<doc> {
                     'lib/nqueens.riv',
                   ))),
           Padding(
-            padding: EdgeInsets.only(top: 50, left: 230),
+            padding: const EdgeInsets.only(top: 50, left: 230),
             child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 60, left: 1230),
+            child: SizedBox(height: 60, child: Image.network(widget.data!.photoURL.toString())),
           ),
           SafeArea(
               child: Padding(
@@ -114,7 +120,7 @@ class docState extends State<doc> {
                           end: Alignment.bottomRight,
                         ).createShader(bounds),
                         child: const Text(
-                          'Precise Doc’s For Ya’',
+                          'Precise Docs For Ya',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 55,
@@ -122,16 +128,6 @@ class docState extends State<doc> {
                           ),
                         ),
                       ),
-                      // Text(
-                      //   "Welcome to Isvara",
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 55,
-                      //       fontFamily: "Mukta",
-                      //       height: 1.2,
-                      //       fontStyle: FontStyle.normal,
-                      //       fontWeight: FontWeight.w500),
-                      // ),
                       SizedBox(
                         height: 20,
                       ),
@@ -156,10 +152,10 @@ class docState extends State<doc> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 60,
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(left: 10),
                         child: SizedBox(
                           width: 450,
@@ -174,7 +170,7 @@ class docState extends State<doc> {
                       SizedBox(
                         height: 60,
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(left: 10),
                         child: SizedBox(
                           width: 450,
