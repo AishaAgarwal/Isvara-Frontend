@@ -98,7 +98,7 @@ class docState extends State<doc> {
             child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 60, left: 1230),
+            padding: const EdgeInsets.only(top: 50, left: 230),
             child: SizedBox(height: 60, child: Image.network(widget.data!.photoURL.toString())),
           ),
           SafeArea(
