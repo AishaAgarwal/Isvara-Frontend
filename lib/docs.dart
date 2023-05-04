@@ -36,10 +36,9 @@ class _DynamicDialogState extends State<DynamicDialog> {
 }
 
 class doc extends StatefulWidget {
-  const doc({super.key, required this.camera, required this.data, this.auth});
+  const doc({super.key, required this.camera, required this.data});
   final CameraDescription camera;
   final User? data;
-  final FirebaseAuth? auth;
   @override
   docState createState() => docState();
 }
@@ -142,7 +141,7 @@ class docState extends State<doc> {
                                   ),
                                   onPressed: () async {
                                     stat.isTapped.value = false;
-                                    await widget.auth!.signOut();
+                                    await stat.auth.signOut();
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>

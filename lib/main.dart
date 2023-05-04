@@ -185,11 +185,10 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen(
-      {super.key, required this.camera, required this.dat, this.authy});
+      {super.key, required this.camera, required this.dat});
 
   final CameraDescription camera;
   final User? dat;
-  final FirebaseAuth? authy;
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }
@@ -405,7 +404,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   ),
                                   onPressed: () async {
                                     stat.isTapped.value = false;
-                                    await widget.authy!.signOut();
+                                    await stat.auth.signOut();
                                     print("Here");
                                     Navigator.of(context).push(
                                         MaterialPageRoute(

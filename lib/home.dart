@@ -17,15 +17,14 @@ class DynamicDialog extends StatefulWidget {
   @override
   _DynamicDialogState createState() => _DynamicDialogState();
 }
+var stat = Get.find<appController>();
 
-late FirebaseAuth auth;
 Future<User?> signInWithGoogle({required BuildContext context}) async {
-  auth = FirebaseAuth.instance;
   User? user;
   GoogleAuthProvider authProvider = GoogleAuthProvider();
   try {
     final UserCredential userCredential =
-        await auth.signInWithPopup(authProvider);
+        await stat.auth.signInWithPopup(authProvider);
     user = userCredential.user;
     print(user!.photoURL);
   } catch (e) {
@@ -64,7 +63,6 @@ class home extends StatefulWidget {
 
 class homeState extends State<home> {
   bool x = true;
-  var stat = Get.find<appController>();
   int i = 0;
 
   @override
@@ -205,7 +203,7 @@ class homeState extends State<home> {
                         height: 100,
                       ),
                       MyElevatedButton(
-                        width: 210,
+                        width: 230,
                         height: 45,
                         onPressed: () async {
                           await signInWithGoogle(context: context)
@@ -216,7 +214,6 @@ class homeState extends State<home> {
                                                 doc(
                                                   camera: widget.camera,
                                                   data: value,
-                                                  auth: auth,
                                                 ))),
                                     print(value)
                                   });
