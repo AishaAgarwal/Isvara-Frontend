@@ -94,6 +94,7 @@ Future<void> main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   runApp(GetMaterialApp(
+     title: 'Isvara',
       initialBinding: InBin(),
       theme: ThemeData(useMaterial3: true),
       debugShowCheckedModeBanner: false,
