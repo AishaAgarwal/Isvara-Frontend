@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:isvaraf/controller/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:isvaraf/home.dart';
 import 'package:isvaraf/main.dart';
 import 'package:rive/rive.dart' as riv;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,9 +36,10 @@ class _DynamicDialogState extends State<DynamicDialog> {
 }
 
 class doc extends StatefulWidget {
-  const doc({super.key, required this.camera, required this.data});
+  const doc({super.key, required this.camera, required this.data, this.auth});
   final CameraDescription camera;
   final User? data;
+  final FirebaseAuth? auth;
   @override
   docState createState() => docState();
 }
@@ -45,8 +47,8 @@ class doc extends StatefulWidget {
 class docState extends State<doc> {
   bool x = true;
   var stat = Get.find<appController>();
+  
   int i = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,12 +97,70 @@ class docState extends State<doc> {
             child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
           ),
           Padding(
+            padding: const EdgeInsets.only(top: 50, left: 230),
+            child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
+          ),
+          Padding(
             padding: const EdgeInsets.only(top: 50, left: 1230),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(100.0),
-                child: SizedBox(
-                    height: 50,
-                    child: Image.network(widget.data!.photoURL.toString()))),
+                child: InkWell(
+                  onTap: () => {
+                    stat.isTapped.value
+                        ? stat.isTapped.value = false
+                        : stat.isTapped.value = true
+                  },
+                  child: Tooltip(
+                    message: widget.data!.displayName,
+                    child: SizedBox(
+                        height: 50,
+                        child: Image.network(widget.data!.photoURL.toString())),
+                  ),
+                )),
+          ),
+          Obx(
+            () => stat.isTapped.value
+                ? Padding(
+                    padding: EdgeInsets.only(top: 90, left: 1230),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                          color: Colors.white,
+                          height: 70,
+                          width: 200,
+                          child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 3,
+                                    backgroundColor:
+                                        Color.fromARGB(255, 248, 246, 246),
+                                    shadowColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
+                                  onPressed: () async {
+                                    stat.isTapped.value = false;
+                                    await widget.auth!.signOut();
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                home(
+                                                  camera: widget.camera,
+                                                )));
+                                  },
+                                  icon: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.red,
+                                  ),
+                                  label: Text(
+                                    'Sign Out',
+                                    style: TextStyle(color: Colors.red),
+                                  )))),
+                    ),
+                  )
+                : SizedBox(),
           ),
           SafeArea(
               child: Padding(
@@ -193,9 +253,8 @@ class docState extends State<doc> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   TakePictureScreen(
-                                    camera: widget.camera,
-                                    dat: widget.data
-                                  )));
+                                      camera: widget.camera,
+                                      dat: widget.data)));
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Text(

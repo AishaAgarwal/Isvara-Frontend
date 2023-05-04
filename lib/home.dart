@@ -18,8 +18,9 @@ class DynamicDialog extends StatefulWidget {
   _DynamicDialogState createState() => _DynamicDialogState();
 }
 
+late FirebaseAuth auth;
 Future<User?> signInWithGoogle({required BuildContext context}) async {
-  FirebaseAuth auth = FirebaseAuth.instance;
+  auth = FirebaseAuth.instance;
   User? user;
   GoogleAuthProvider authProvider = GoogleAuthProvider();
   try {
@@ -214,10 +215,12 @@ class homeState extends State<home> {
                                             builder: (BuildContext context) =>
                                                 doc(
                                                   camera: widget.camera,
-                                                  data: value 
+                                                  data: value,
+                                                  auth: auth,
                                                 ))),
                                     print(value)
                                   });
+                            
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Text(

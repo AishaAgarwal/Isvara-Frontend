@@ -184,14 +184,12 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
 }
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({
-    super.key,
-    required this.camera,
-    required this.dat,
-  });
+  const TakePictureScreen(
+      {super.key, required this.camera, required this.dat, this.authy});
 
   final CameraDescription camera;
   final User? dat;
+  final FirebaseAuth? authy;
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }
@@ -369,9 +367,64 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             padding: const EdgeInsets.only(top: 50, left: 1230),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(100.0),
-                child: SizedBox(
-                    height: 50,
-                    child: Image.network(widget.dat!.photoURL.toString()))),
+                child: InkWell(
+                  onTap: () => {
+                    stat.isTapped.value
+                        ? stat.isTapped.value = false
+                        : stat.isTapped.value = true
+                  },
+                  child: Tooltip(
+                    message: widget.dat!.displayName,
+                    child: SizedBox(
+                        height: 50,
+                        child: Image.network(widget.dat!.photoURL.toString())),
+                  ),
+                )),
+          ),
+          Obx(
+            () => stat.isTapped.value
+                ? Padding(
+                    padding: EdgeInsets.only(top: 90, left: 1230),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                          color: Colors.white,
+                          height: 70,
+                          width: 200,
+                          child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 3,
+                                    backgroundColor:
+                                        Color.fromARGB(255, 248, 246, 246),
+                                    shadowColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
+                                  onPressed: () async {
+                                    stat.isTapped.value = false;
+                                    print("Here");
+                                    await widget.authy!.signOut();
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                home(
+                                                  camera: widget.camera,
+                                                )));
+                                  },
+                                  icon: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.red,
+                                  ),
+                                  label: Text(
+                                    'Sign Out',
+                                    style: TextStyle(color: Colors.red),
+                                  )))),
+                    ),
+                  )
+                : SizedBox(),
           ),
           Padding(
               padding: EdgeInsets.only(left: 650, top: 150),
