@@ -405,8 +405,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   ),
                                   onPressed: () async {
                                     stat.isTapped.value = false;
-                                    print("Here");
                                     await widget.authy!.signOut();
+                                    print("Here");
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
@@ -580,7 +580,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (BuildContext context) => doc.doc(
                                         camera: widget.camera,
-                                        data: null,
+                                        data: widget.dat,
                                       )));
                             },
                             borderRadius: BorderRadius.circular(20),

@@ -273,7 +273,7 @@ class MyElevatedButton extends StatelessWidget {
           height: 30,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(100.0),
-            child: Image.network('lib/google.png'),
+            child: Image.asset('lib/google.png'),
           ),
         ),
         onPressed: onPressed,
