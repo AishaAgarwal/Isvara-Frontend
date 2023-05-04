@@ -141,7 +141,7 @@ class docState extends State<doc> {
                                   ),
                                   onPressed: () async {
                                     stat.isTapped.value = false;
-                                    await stat.auth.signOut();
+                                    await auth.signOut();
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>

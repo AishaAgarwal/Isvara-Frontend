@@ -17,14 +17,14 @@ class DynamicDialog extends StatefulWidget {
   @override
   _DynamicDialogState createState() => _DynamicDialogState();
 }
-var stat = Get.find<appController>();
-
+// var stat = Get.find<appController>();
+FirebaseAuth auth = FirebaseAuth.instance;
 Future<User?> signInWithGoogle({required BuildContext context}) async {
   User? user;
   GoogleAuthProvider authProvider = GoogleAuthProvider();
   try {
     final UserCredential userCredential =
-        await stat.auth.signInWithPopup(authProvider);
+        await auth.signInWithPopup(authProvider);
     user = userCredential.user;
     print(user!.photoURL);
   } catch (e) {
@@ -64,7 +64,6 @@ class home extends StatefulWidget {
 class homeState extends State<home> {
   bool x = true;
   int i = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

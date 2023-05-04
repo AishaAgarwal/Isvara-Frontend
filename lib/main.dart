@@ -86,12 +86,13 @@ class MyElevated extends StatelessWidget {
 
 Future<void> main() async {
   InBin().dependencies();
-  await Firebase.initializeApp(
+
+  final cameras = await availableCameras();
+  final firstCamera = cameras.first;
+    await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
   runApp(GetMaterialApp(
       initialBinding: InBin(),
       theme: ThemeData(useMaterial3: true),
@@ -404,7 +405,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   ),
                                   onPressed: () async {
                                     stat.isTapped.value = false;
-                                    await stat.auth.signOut();
+                                    await auth.signOut();
                                     print("Here");
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
