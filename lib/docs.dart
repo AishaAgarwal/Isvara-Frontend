@@ -133,7 +133,7 @@ class docState extends State<doc> {
                                   style: ElevatedButton.styleFrom(
                                     elevation: 3,
                                     backgroundColor:
-                                        Color.fromARGB(255, 248, 246, 246),
+                                        Color.fromARGB(255, 248, 248, 248),
                                     shadowColor: Colors.black,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
