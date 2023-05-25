@@ -46,7 +46,7 @@ class doc extends StatefulWidget {
 class docState extends State<doc> {
   bool x = true;
   var stat = Get.find<appController>();
-
+  
   int i = 0;
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class docState extends State<doc> {
               sigmaY: 10,
             ),
           )),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(right: 125),
             child: riv.RiveAnimation.asset(
               'lib/spine.riv',
@@ -84,7 +84,7 @@ class docState extends State<doc> {
                 // height: 10,
                 ),
           )),
-          Padding(
+          const Padding(
               padding: EdgeInsets.only(left: 650, top: 150),
               child: SizedBox(
                   height: 500,

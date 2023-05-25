@@ -14,6 +14,7 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' as riv;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sizer/sizer.dart';
 
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -86,21 +87,23 @@ class MyElevated extends StatelessWidget {
 
 Future<void> main() async {
   InBin().dependencies();
-
   final cameras = await availableCameras();
   final firstCamera = cameras.first;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(GetMaterialApp(
-     title: 'Isvara',
-      initialBinding: InBin(),
-      theme: ThemeData(useMaterial3: true),
-      debugShowCheckedModeBanner: false,
-      home: home(
-        camera: firstCamera,
-      )));
+  runApp(
+  Sizer(builder: (context, orientation, deviceType) {
+    return GetMaterialApp(
+        title: 'Isvara',
+        initialBinding: InBin(),
+        theme: ThemeData(useMaterial3: true),
+        debugShowCheckedModeBanner: false,
+        home: home(
+          camera: firstCamera,
+        ));
+  }));
 }
 
 class PushNotificationApp extends StatefulWidget {
@@ -186,8 +189,7 @@ class _PushNotificationAppState extends State<PushNotificationApp> {
 }
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen(
-      {super.key, required this.camera, required this.dat});
+  const TakePictureScreen({super.key, required this.camera, required this.dat});
 
   final CameraDescription camera;
   final User? dat;
@@ -348,7 +350,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               sigmaY: 10,
             ),
           )),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(right: 150),
             child: riv.RiveAnimation.asset(
               'lib/spine.riv',

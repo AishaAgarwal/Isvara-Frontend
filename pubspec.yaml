@@ -48,6 +48,7 @@ dependencies:
 
   http:
   animated_text_kit: ^4.2.2
+  sizer: ^2.0.15
 dev_dependencies:
   flutter_test:
     sdk: flutter

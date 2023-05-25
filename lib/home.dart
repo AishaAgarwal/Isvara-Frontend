@@ -8,6 +8,7 @@ import 'package:isvaraf/main.dart';
 import 'package:rive/rive.dart' as riv;
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sizer/sizer.dart';
 
 class DynamicDialog extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -17,6 +18,7 @@ class DynamicDialog extends StatefulWidget {
   @override
   _DynamicDialogState createState() => _DynamicDialogState();
 }
+
 // var stat = Get.find<appController>();
 FirebaseAuth auth = FirebaseAuth.instance;
 Future<User?> signInWithGoogle({required BuildContext context}) async {
@@ -77,7 +79,7 @@ class homeState extends State<home> {
           //     left: 100,
           //     child: Image.asset('RiveAsset/spine.png')),
           Padding(
-            padding: EdgeInsets.only(right: 125),
+            padding: EdgeInsets.only(right: 8.68.w),
             child: riv.RiveAnimation.asset(
               'lib/spine.riv',
             ),
@@ -93,9 +95,9 @@ class homeState extends State<home> {
                 ),
           )),
           Padding(
-              padding: EdgeInsets.only(left: 650, top: 150),
+              padding: EdgeInsets.only(left: 45.13.w, top: 18.27.h),
               child: SizedBox(
-                  height: 500,
+                  height: 60.9.h,
                   child: riv.RiveAnimation.asset(
                     'lib/curious_eyess.riv',
                   ))),
@@ -110,23 +112,28 @@ class homeState extends State<home> {
                 ),
           )),
           Padding(
-            padding: EdgeInsets.only(top: 50, left: 230),
-            child: SizedBox(height: 60, child: Image.asset("lib/oh.png")),
+            padding: EdgeInsets.only(top: 6.09.h, left: 15.97.w),
+            child: SizedBox(height: 7.3.h, child: Image.asset("lib/oh.png")),
           ),
           SafeArea(
               child: Padding(
-            padding: const EdgeInsets.only(left: 20, top: 100),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width == 567 &&
+                        MediaQuery.of(context).size.width == 502
+                    ? 15.97.w
+                    : 1.388.w,
+                top: 12.18.h),
             child: Column(
               children: [
                 SizedBox(
-                  width: (MediaQuery.of(context).size.width) * 1 / 1.59,
+                  width: 62.9.w,
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 10,
+                        height: 1.21.h,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) => LinearGradient(
+                        shaderCallback: (bounds) => const LinearGradient(
                           begin: Alignment.topLeft,
                           colors: [Colors.grey, Colors.white],
                           end: Alignment.bottomRight,
@@ -135,9 +142,9 @@ class homeState extends State<home> {
                           animatedTexts: [
                             TypewriterAnimatedText(
                               'Welcome to Isvara',
-                              textStyle: const TextStyle(
+                              textStyle: TextStyle(
                                 color: Colors.white,
-                                fontSize: 55,
+                                fontSize: 3.34.h + 1.9.w,
                                 fontWeight: FontWeight.w300,
                               ),
                               speed: const Duration(milliseconds: 200),
@@ -160,51 +167,59 @@ class homeState extends State<home> {
                       //       fontWeight: FontWeight.w500),
                       // ),
                       SizedBox(
-                        height: 20,
+                        height: 2.43.h,
                       ),
                       Text(
                         "Keeping an eye on your eyes",
                         style: TextStyle(color: Colors.white60),
                       ),
                       SizedBox(
-                        height: 90,
+                        height: 10.96.h,
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
                         child: SizedBox(
-                          width: 450,
+                          width: 31.25.w,
                           child: Text(
                             "Greetings users, providing eye protection and Care, via realtime notifications/alerts ",
                             style: TextStyle(
-                                color: Color.fromARGB(255, 230, 222, 222),
-                                fontSize: 18,
+                                color: const Color.fromARGB(255, 230, 222, 222),
+                                fontSize: 1.09.h + 0.6.w,
                                 fontStyle: FontStyle.normal,
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
                       ),
                       SizedBox(
-                        height: 90,
+                        height: 10.96.h,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 0.69.w),
                         child: SizedBox(
-                          width: 450,
+                          width: 31.25.w,
                           child: Text(
                             "Suggesting you to move backwards from the screen maintaining an ideal distance incase of extreme closure to the screen",
                             style: TextStyle(
                                 color: Color.fromARGB(255, 230, 222, 222),
-                                fontSize: 17),
+                                fontSize: 1.035.h + 0.59.w),
                           ),
                         ),
                       ),
                       SizedBox(
-                        height: 100,
+                        height: 12.18.h,
                       ),
                       MyElevatedButton(
-                        width: 230,
-                        height: 45,
+                        width: MediaQuery.of(context).size.width < 571 &&
+                                MediaQuery.of(context).size.height < 479
+                            ? (580 * 0.159)
+                            : MediaQuery.of(context).size.width < 773 &&
+                                    MediaQuery.of(context).size.height > 479
+                                ? (778 * 0.159)
+                                : 15.9.w,
+                        height: 5.48.h,
                         onPressed: () async {
+                          print(MediaQuery.of(context).size.width);
+                          print(MediaQuery.of(context).size.height);
                           await signInWithGoogle(context: context)
                               .then((value) => {
                                     Navigator.of(context).push(
@@ -216,12 +231,12 @@ class homeState extends State<home> {
                                                 ))),
                                     print(value)
                                   });
-                            
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Text(
                           'Sign in with Google',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 0.97.h + 0.4.w),
                         ),
                       ),
                     ],
@@ -239,7 +254,7 @@ class homeState extends State<home> {
 class MyElevatedButton extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final double? width;
-  final double height;
+  final double? height;
   final Gradient gradient;
   final VoidCallback? onPressed;
   final Widget child;
@@ -250,7 +265,7 @@ class MyElevatedButton extends StatelessWidget {
     required this.child,
     this.borderRadius,
     this.width,
-    this.height = 30,
+    this.height,
     this.gradient = const LinearGradient(colors: [Colors.cyan, Colors.indigo]),
   }) : super(key: key);
 
@@ -266,7 +281,7 @@ class MyElevatedButton extends StatelessWidget {
       ),
       child: ElevatedButton.icon(
         icon: SizedBox(
-          height: 30,
+          height: 3.65.h,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(100.0),
             child: Image.asset('lib/google.png'),
